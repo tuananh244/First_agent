@@ -81,13 +81,11 @@ if st.button("🔍 Phân tích"):
             git_log, diff_summary = extract_diff.generate_security_diff_report(repo_path, old_ver, new_ver, gemini_analyse_path, code_diff_path)
             st.success(f"✅ Đã lưu kết quả của code diff vào {code_diff_path}.")
 
-
+            ### Gọi Gemini để xử lý các thông tin code
             summary_path = os.path.join(output_path, "summary_of_CVE.md")
-            gemini_result = gemini_call.read_diff_markdown(code_diff_path)
-            result = gemini_call.generate_gemini_prompt_for_diff_summary(gemini_result)
-            path_utils.save_analysis_to_md(result, summary_path)
-            st.success(f"✅ Đã lưu kết quả của gemini vào {summary_path}.")
-            st.write(result)
+            gemini_call.run_diff_analysis(code_diff_path, summary_path)
+            st.success(f"✅ Đã lưu kết quả của Gemini vào {summary_path}.")
+            st.markdown(Path(summary_path).read_text(), unsafe_allow_html=True)
 
             st.success("✅ Phân tích hoàn tất!")
             st.json(report_json, expanded=True)
