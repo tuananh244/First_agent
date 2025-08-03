@@ -7,7 +7,7 @@ Hệ thống này hỗ trợ phân tích kỹ thuật các lỗ hổng bảo m�
 ## 🔁 Pipeline Phân Tích Tự Động Từ CVE ID
 
 ```mermaid
-graph TD
+graph LR
 
     A[CVE ID] --> B[📥 fetch_info.py]
     B --> C[🔗 classify_url.py ]
@@ -18,7 +18,5 @@ graph TD
     G --> H[🧠 gemini_ans.py]
     H --> I[📝 write_report.py]
 
-    style A fill:#e3f2fd
-    style I fill:#fff3e0
 ```
 
