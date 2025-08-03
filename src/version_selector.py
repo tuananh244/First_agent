@@ -1,19 +1,27 @@
 # version_selector.py
 
 import subprocess
-import os
 import re
 from packaging import version
 
 def list_git_tags(repo_path):
-    """Trả về danh sách tất cả các tag dạng version từ repo."""
+    """Trả về danh sách tất cả các tag từ repo."""
     result = subprocess.run(["git", "-C", repo_path, "tag"], capture_output=True, text=True)
     tags = result.stdout.strip().split("\n")
-    return [tag for tag in tags if tag]  # loại bỏ rỗng
+    return [tag for tag in tags if tag]
+
+def extract_version_number(tag):
+    """
+    Trích version từ tag (ví dụ: 'or-1.2.3' -> '1.2.3')
+    Nếu không tìm thấy version hợp lệ, trả về None.
+    """
+    match = re.search(r"\d+(?:\.\d+)+", tag)
+    return match.group(0) if match else None
 
 def parse_version_condition(condition: str):
     """
-    Từ điều kiện kiểu '0 <= 1.11.4' hoặc '>= 1.0.0, < 2.0.0' trả về list điều kiện [(op, version)]
+    Phân tích chuỗi điều kiện như '<= 1.11.4, > 1.0.0'
+    Trả về list [(op, version_string)]
     """
     parts = re.split(r',\s*', condition)
     parsed = []
@@ -23,39 +31,45 @@ def parse_version_condition(condition: str):
             op, ver = match.groups()
             parsed.append((op, ver))
         else:
-            # Xử lý dạng đặc biệt như '0 <= 1.11.4'
-            match = re.match(r"(\d+)\s*(<=?)\s*([\d\.]+)", part)
+            # Hỗ trợ '0 <= 1.11.4' kiểu so sánh trái phải
+            match = re.match(r"(\d+)\s*(<=?|>=?)\s*([\d\.]+)", part)
             if match:
                 _, op, ver = match.groups()
                 parsed.append((op, ver))
     return parsed
 
 def filter_versions(tags, conditions):
-    """Lọc danh sách version theo điều kiện"""
+    """
+    Lọc tag gốc theo điều kiện version.
+    Trả về danh sách tag gốc phù hợp.
+    """
     valid = []
     for tag in tags:
+        tag_ver_str = extract_version_number(tag)
+        if not tag_ver_str:
+            continue
         try:
-            tag_ver = version.parse(tag)
+            tag_ver = version.parse(tag_ver_str)
         except:
             continue
 
         ok = True
-        for op, ver in conditions:
-            cmp_ver = version.parse(ver)
+        for op, cond_ver_str in conditions:
+            cmp_ver = version.parse(cond_ver_str)
             if op == "<" and not tag_ver < cmp_ver: ok = False
             elif op == "<=" and not tag_ver <= cmp_ver: ok = False
             elif op == ">" and not tag_ver > cmp_ver: ok = False
             elif op == ">=" and not tag_ver >= cmp_ver: ok = False
         if ok:
-            valid.append(tag)
+            valid.append((tag_ver, tag))  # lưu cả version và tag gốc
     return valid
 
 def find_matching_version(repo_path, version_condition: str, latest=True):
-    """Trả về version tag phù hợp nhất theo điều kiện"""
+    """Trả về tên tag phù hợp nhất theo điều kiện"""
     tags = list_git_tags(repo_path)
     conds = parse_version_condition(version_condition)
     matched = filter_versions(tags, conds)
     if not matched:
         return None
-    sorted_tags = sorted(matched, key=version.parse)
-    return sorted_tags[-1] if latest else sorted_tags[0]
+    sorted_tags = sorted(matched, key=lambda x: x[0])  # sắp theo version
+    return sorted_tags[-1][1] if latest else sorted_tags[0][1]  # trả về tag gốc

@@ -3,9 +3,8 @@ import streamlit as st
 import time
 import json
 import os
-from analyze import extract_diff, repo, gemini_analyze, git_diff
+from analyze import extract_diff, repo, gemini_analyze, git_diff, gemini_ans
 from fetch import search_patched_ver
-import path_utils
 import write_report
 import normalize
 import version_resolver
