@@ -1,8 +1,3 @@
----
-title: "\U0001F50D CVE Technical Analysis Pipeline"
-
----
-
 # 🔍 CVE Technical Analysis Pipeline
 
 Hệ thống này hỗ trợ phân tích kỹ thuật các lỗ hổng bảo mật (CVE) bằng cách tự động hóa.
