@@ -107,5 +107,6 @@ python run.py
 
 Sau khi chạy run.py, tiến hành truy cập links sau: [http://localhost:8501/](http://localhost:8501/)
 
-Hình ảnh giao diện:
+
+Ví dụ về giao diện:
 ![image](./UI.png)
