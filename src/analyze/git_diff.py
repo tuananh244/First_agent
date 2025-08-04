@@ -3,9 +3,6 @@ import subprocess
 from pathlib import Path
 from datetime import datetime
 
-def fetch_tags(repo_path):
-    subprocess.run(["git", "fetch", "--tags"], cwd=repo_path, check=True)
-
 def get_git_log(repo_path, old_tag, new_tag):
     result = subprocess.run(
         ["git", "log", "--pretty=format:%h|%an|%ad|%s", "--date=short", f"{old_tag}..{new_tag}"],
@@ -46,7 +43,7 @@ def generate_markdown_report(repo_path, old_tag, new_tag, output_path):
 
     return output_path
 
-def extract_log_and_diff_info(repo_path, old_tag, new_tag, output_path):
+def extract_log_and_diff_info(repo_path, old_tag, new_tag, output_path: str):
     """
     Lấy thông tin Git log và diff giữa 2 tag, lưu vào file Markdown,
     và trả lại nội dung đã trích xuất.
@@ -64,6 +61,7 @@ def extract_log_and_diff_info(repo_path, old_tag, new_tag, output_path):
             "report_path": <path to saved .md file>
         }
     """
+
     # Sinh markdown file
     report_path = generate_markdown_report(repo_path, old_tag, new_tag, output_path)
 

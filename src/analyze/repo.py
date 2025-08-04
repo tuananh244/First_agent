@@ -38,12 +38,21 @@ def clone_temp_repo_from_link(github_url: str, temp_base_dir: str = "temp_repos"
 
     return repo_local_path
 
-def cleanup_temp_repo(path: f"temp_repos") -> None:
+def cleanup_temp_repo(subfolder: str = "") -> None:
     """
-    Xóa toàn bộ thư mục repo tạm sau khi phân tích.
+    Xóa toàn bộ thư mục cha (temp_repos) nếu tồn tại.
     """
-    if os.path.exists(path):
-        shutil.rmtree(path)
-        print(f"🧹 Đã xóa thư mục tạm: {path}")
+    current_path = os.path.abspath(__file__)
+    project_root = os.path.abspath(os.path.join(os.path.dirname(current_path), "..", ".."))
+
+    # Tạo đường dẫn đến temp_repos hoặc temp_repos/subfolder
+    temp_root = os.path.join(project_root, "temp_repos")
+    if subfolder:
+        temp_root = os.path.join(temp_root, subfolder)
+
+    # Xóa nếu tồn tại
+    if os.path.exists(temp_root):
+        shutil.rmtree(temp_root)
+        print(f"🧹 Đã xóa thư mục tạm: {temp_root}")
     else:
-        print(f"⚠️ Thư mục không tồn tại: {path}")
+        print(f"⚠️ Thư mục không tồn tại: {temp_root}")

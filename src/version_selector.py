@@ -73,3 +73,15 @@ def find_matching_version(repo_path, version_condition: str, latest=True):
         return None
     sorted_tags = sorted(matched, key=lambda x: x[0])  # sắp theo version
     return sorted_tags[-1][1] if latest else sorted_tags[0][1]  # trả về tag gốc
+
+def find_tag_by_exact_version(repo_path, target_version: str):
+    """
+    Tìm tag có version khớp chính xác với target_version (ví dụ '1.11.5'),
+    bất kể prefix là gì (controller-v1.11.5, v1.11.5, etc.)
+    """
+    tags = list_git_tags(repo_path)
+    for tag in tags:
+        tag_ver = extract_version_number(tag)
+        if tag_ver == target_version:
+            return tag
+    return None
