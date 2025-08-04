@@ -113,4 +113,4 @@ python run.py
 Sau khi chạy run.py, tiến hành truy cập links sau: (here)[http://localhost:8501]
 
 Hình ảnh giao diện:
-![image](https://hackmd.io/_uploads/SJ-IJeRwel.png)
+![image](./UI.png)
