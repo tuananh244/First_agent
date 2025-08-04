@@ -110,7 +110,7 @@ pip install -r requirements.txt
 python run.py
 ```
 
-Sau khi chạy run.py, tiến hành truy cập links sau: (here)[http://localhost:8501]
+Sau khi chạy run.py, tiến hành truy cập links sau: [http://localhost:8501/](http://localhost:8501/)
 
 Hình ảnh giao diện:
 ![image](./UI.png)
